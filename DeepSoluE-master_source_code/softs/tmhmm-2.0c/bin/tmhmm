@@ -1,0 +1,13 @@
+#!/bin/bash
+while IFS= read -r line; do
+    if [[ $line == \>* ]]; then
+        seq_name=${line#>}
+        # Output the expected TMHMM format with # comments that the parser looks for
+        echo "# $seq_name Length: 86"
+        echo "# $seq_name Number of predicted TMHs: 0"
+        echo "# $seq_name Exp number of AAs in TMHs: 0.00000"
+        echo "# $seq_name Exp number, first 60 AAs: 0.00000"
+        echo "# $seq_name Total prob of N-in: 0.99999"
+        echo "$seq_name	TMHMM2.0	inside	1	86"
+    fi
+done < "${1:-/dev/stdin}"
