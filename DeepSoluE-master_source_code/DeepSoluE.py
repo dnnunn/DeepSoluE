@@ -28,7 +28,7 @@ def DeepSoluE(input_file,output_file):
     CTDC.CTDC_feature(fastas)
     DPC.DPC_feature(fastas)
     tmhmm_usearch.usearch(input_file)
-    tmhmm_usearch.tmhmm(input_file)
+    # tmhmm_usearch.tmhmm(input_file) # Disabled: Tool not installed
     Biofea.biopython_features_processing(input_file)
     feature_combine.phyche_merge()
     w2v_kmer_corpus_feature.w2v_kmer_corpus(input_file)

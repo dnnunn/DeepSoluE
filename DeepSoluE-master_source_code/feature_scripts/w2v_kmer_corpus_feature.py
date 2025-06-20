@@ -19,7 +19,7 @@ def kmer_seq(sequence, k):
 
 def w2v_kmer_corpus(input_file):
     with open('./sequence/w2v_kmer.txt',"w") as fil1:
-            for seq_record in SeqIO.parse('./sequence/'+str(input_file), "fasta"):
+            for seq_record in SeqIO.parse(input_file, "fasta"): # FIX: Removed hardcoded './sequence/' prefix
                 seq_id=seq_record.id
                 seq=seq_record.seq
                 sub_list=kmer_seq(seq,3)
@@ -44,12 +44,12 @@ def w2v_features():
     from gensim import utils
     from gensim.models.word2vec import Word2Vec
     
-    with utils.smart_open('./sequence/w2v_kmer.txt','r',encoding='utf-8-sig',) as infile:
+    with open('./sequence/w2v_kmer.txt','r',encoding='utf-8-sig',) as infile:
         its_list=list(infile)
     list_seq=[] # 保存 kmer序列
     for x in range(len(its_list)): 
         list_seq.append(its_list[x].split(",")[1:])
     
     model= Word2Vec.load("./model/w2v/training_k3w2_shffule.model")       
-    X=word_vector(np.array(list_seq),model)
+    X=word_vector(list_seq,model)
     pd.DataFrame(X).to_csv("features/w2v_feature.csv",sep=",")   

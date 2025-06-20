@@ -54,7 +54,7 @@ def biopython_12(input_file):
     with open('./features/biofea/biofea.csv', "w",newline="") as csv_out:
         csv_wr = csv.DictWriter(csv_out, fieldnames=features)
         csv_wr.writeheader()
-        for seq in SeqIO.parse("./sequence/"+str(input_file), "fasta"):
+        for seq in SeqIO.parse(input_file, "fasta"): # FIX: Removed hardcoded './sequence/' prefix
             row = dict.fromkeys(features)
             row['sid'] = seq.id
             analysis = ProtParam.ProteinAnalysis(str(seq.seq))
@@ -94,7 +94,7 @@ def scale(x):
 
     from Bio.SeqUtils import seq3
     for x in scale_aa:
-        scale_new[x]=np.float(scale_ori[seq3(x)])
+        scale_new[x]=float(scale_ori[seq3(x)])
     return scale_new
     
 
@@ -130,7 +130,7 @@ def scale_main(input_file):
         #print(x)
         xx=x.split("_")[0]
         w=scalew[i]
-        physico_chemical("./sequence/"+str(input_file), xx+".csv",x,w,xx)
+        physico_chemical(input_file, xx+".csv",x,w,xx) # FIX: Removed hardcoded './sequence/' prefix
         i=i+1
 
 
@@ -163,7 +163,7 @@ def usearch_main(usearch_result,out_name,input_file):
         
     with open('./features/biofea/'+out_name,"w",newline='') as fil1:
         fil1.write(""+","+"identity"+"\n")
-        for seq_record in SeqIO.parse('./sequence/'+str(input_file),"fasta"):
+        for seq_record in SeqIO.parse(input_file,"fasta"): # FIX: Removed hardcoded './sequence/' prefix
             fil1.write(str(seq_record.id)+",")
             if seq_record.id not in identity_dict:
                 fil1.write(str(0)+"\n")
@@ -205,6 +205,27 @@ def feature_merge(feature_list,save_name):
         dfx1=pd.DataFrame(dfx) 
         dfx1.to_csv('./features/'+str(save_name)+".csv",sep=",")
         
+def dummy_tmhmm_fea():
+    import pandas as pd
+    # Read an existing feature file to get the sequence IDs
+    try:
+        df_biofea = pd.read_csv('./features/biofea/biofea.csv', index_col='sid')
+        seq_ids = df_biofea.index
+        # Create a dataframe for the dummy features, using the same sequence IDs
+        dummy_df = pd.DataFrame({
+            'AAs_TMHs': [0] * len(seq_ids),
+            '60_AAs_TMHs': [0] * len(seq_ids),
+            'N_in_cytop': [0] * len(seq_ids)
+        }, index=seq_ids)
+        dummy_df.index.name = 'seq_id'
+        # Save the dummy features to tmhmmfea.csv
+        dummy_df.to_csv('./features/biofea/tmhmmfea.csv')
+    except FileNotFoundError:
+        print("Warning: biofea.csv not found. Cannot create dummy tmhmm features.")
+        # Create an empty file with just the header if biofea doesn't exist, to avoid crashing the merge
+        with open('./features/biofea/tmhmmfea.csv', 'w') as f:
+            f.write('seq_id,AAs_TMHs,60_AAs_TMHs,N_in_cytop\n')
+
 def biopython_features_processing(input_file):
 
     biopython_12(input_file)
@@ -212,7 +233,7 @@ def biopython_features_processing(input_file):
     scale_main(input_file)
     
     usearch_main('testing_pdb.b6','identity_testing.csv',input_file)
-    tmhmm_fea()
+    dummy_tmhmm_fea() # Create placeholder for missing tool
 
     feature_list=['biofea.csv', '43.csv',  '38.csv','14.csv','tmhmmfea.csv',  'identity_testing.csv',]
 

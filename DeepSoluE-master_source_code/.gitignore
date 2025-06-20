@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS-generated files
+.DS_Store
+
+# Results and data
+results/
+sequence/
+
+# Specific files
+*.csv
+*.fasta
+*.b6
+tmhmm_test_output.txt

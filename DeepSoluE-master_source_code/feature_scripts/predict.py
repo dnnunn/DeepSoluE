@@ -38,5 +38,5 @@ def result_prediction(output_file):
     pred_class=np.sum(np.array(sss),axis=1)    
     pred_class=list(map(lambda x: "soluble" if x>5 else "insoluble",pred_class))
     results_id_proba_site.append(pred_class)
-    pd.DataFrame(np.array(results_id_proba_site).T,columns=["sequence_id","predicted_probability","result"]).to_csv('./results/'+output_file)
+    pd.DataFrame(np.array(results_id_proba_site).T,columns=["sequence_id","predicted_probability","result"]).to_csv(output_file) # FIX: Removed hardcoded './results/' prefix
     

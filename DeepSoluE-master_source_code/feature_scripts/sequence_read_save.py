@@ -4,11 +4,12 @@
 import re, os, sys
 
 def read_protein_sequences(file):
-    if os.path.exists("./sequence/"+file) == False:
-        print('Error: "' + file + '" does not exist.')
+    # The script is run from the DEEPSOLE_PATH, so 'file' should be a relative path e.g. 'sequence/name.fasta'
+    if not os.path.exists(file):
+        print('Error: "' + file + '" does not exist. Current working directory is ' + os.getcwd())
         sys.exit(1)
 
-    with open("./sequence/"+file) as f:
+    with open(file) as f:
         records = f.read()
 
     if re.search('>', records) == None:
