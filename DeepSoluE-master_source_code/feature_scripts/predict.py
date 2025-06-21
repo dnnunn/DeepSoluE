@@ -17,6 +17,12 @@ def result_prediction(output_file):
     
     pred_proba=[]
     x_test=pd.read_csv('./features/219feature.csv',sep=',',header=0,index_col=0)
+
+    # Check for and handle NaN values to prevent model failure
+    if x_test.isnull().values.any():
+        print("WARNING: NaN values detected in '219feature.csv'. Replacing with 0.")
+        x_test.fillna(0, inplace=True)
+
     seq_id=list(x_test.index)
     x_test=x_test.to_numpy()
     results_id_proba_site.append(seq_id)
